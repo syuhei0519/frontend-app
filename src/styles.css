@@ -1,0 +1,22 @@
+:root { font-family: Inter, system-ui, sans-serif; color: #172034; background: #eef2f7; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input { font: inherit; }
+button { border: 1px solid #c7d0df; border-radius: .45rem; padding: .6rem .85rem; background: white; cursor: pointer; }
+button.primary { color: white; background: #3159c9; border-color: #3159c9; }
+button.danger { color: #b42318; }
+main { width: min(900px, calc(100% - 2rem)); margin: 3rem auto; }
+header, li, .account-form, section { background: white; border: 1px solid #d9e0ea; border-radius: .8rem; box-shadow: 0 8px 30px #1720340d; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; }
+header p { margin: 0; color: #61708c; font-size: .75rem; letter-spacing: .12em; }
+h1, h2 { margin: .3rem 0; }
+section, .account-form { margin-top: 1rem; padding: 1.5rem 2rem; }
+.account-form label { display: grid; gap: .35rem; margin: 1rem 0; font-weight: 600; }
+.account-form input { padding: .7rem; border: 1px solid #bcc7d8; border-radius: .4rem; }
+.accounts { list-style: none; padding: 0; }
+.accounts li { display: flex; justify-content: space-between; align-items: center; margin-top: .7rem; padding: 1rem; }
+.accounts span, .accounts small { display: block; color: #61708c; margin-top: .2rem; }
+.actions { display: flex; justify-content: flex-end; gap: .5rem; }
+.error { color: #b42318; background: #fff1f0; padding: 1rem; border-radius: .5rem; }
+.empty { color: #61708c; }
+@media (max-width: 600px) { header, .accounts li { align-items: stretch; flex-direction: column; gap: 1rem; } }

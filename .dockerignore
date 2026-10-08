@@ -1,0 +1,25 @@
+.git
+node_modules
+dist
+coverage
+.env*
+
+# CI output and caches are not build inputs.
+.oci
+.security
+.cache
+.npm
+image.env
+image-metadata.json
+.oci-private
+.oci-compatibility
+.oci-runtime
+.oci-budget-*
+.oci-missing
+.image-private
+.image-policy
+.prior-scan
+.prior-budget
+.release-store
+.validation/
+__pycache__/

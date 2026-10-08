@@ -1,0 +1,15 @@
+* text=auto eol=lf
+ci/build-oci.sh text eol=lf
+ci/verify-oci-format.sh text eol=lf
+ci/verify-oci-runtime.sh text eol=lf
+ci/oci-smoke/Dockerfile text eol=lf
+ci/run-with-oci-budget.sh text eol=lf
+ci/verify-oci-missing-input.sh text eol=lf
+ci/verify-oci-policy.sh text eol=lf
+ci/run-image-scan.sh text eol=lf
+ci/test-image-scan-finalizer.sh text eol=lf
+ci/verify-oci-rescan.sh text eol=lf
+tools/release-record/schemas/*.json -text
+*.sh text eol=lf
+*.py text eol=lf
+.github/workflows/*.yml text eol=lf

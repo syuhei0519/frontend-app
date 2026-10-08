@@ -1,0 +1,15 @@
+# PE016F OCI検証経路
+
+`OCI_VALIDATION_ENABLED`は既定false。PE018Fまで選択中mainのpublish→verify→proposalを維持する。検証経路は固定BuildKit0.30.0/rootless/linux amd64から一度OCI tarへexportし、空のDocker認証・registry cache無効・pushなしで処理する。元buildのsource/project/pipeline/job、tar SHA256、manifest digest、サイズを記録する。
+
+strict consumerは100MiB archive/1GiB合計展開/512MiB単一ファイルとgzip展開/8MiB JSONを上限とする。単一manifest/config linux amd64/source/revision、全blob size/SHA256、layer diffIDを照合し、traversal・重複・link・不正JSON・破損・複数記述子を拒否する。一時展開は失敗時に削除し、全検証後だけ新layoutを公開する。Go試験は正例とこれらの拒否条件を検証する。
+
+後段は同pipelineのnative needs/artifact引渡しから同tarを再checksum・strict検証する。固定crane v0.21.7 CLIと同じ公式layout readerで完全layer検証/digest一致を確認し、registry clientやpushを呼ばない。OCI tarを直接crane pushへ渡さない。固定Trivy0.75.0が同layout directoryをvuln/secret/misconfig・全severity・空ignorefile・全packageで読めることを確認し、DB24時間以内/future拒否と版照合を行う。raw finding/report/logはprivate一時領域で削除する。公開proofは型付き許可項目、件数、元buildと今回validationの別IDのみ。securityGateApplied/phase2Adoptableはfalseであり、PE017Fの方針判定/SBOM・PE018Fの公開/配備には接続しない。
+
+隔離実行は固定BuildKitのlocal OCI named contextを同manifest digestで参照し、同rootfsのUID10001/nginx起動/readyz/livez/静的HTMLを検証する。検証RUNのnetworkはnone・loopbackのみ、backend DNSはdummy127.0.0.1。API proxyを呼ばず、Source DB/PVC/配備へ接続しない。アプリ再コンパイル/registry base取得/公開は行わない。
+
+一時diskは既存PE009予算（repo2Gi/BuildKit10Gi/空き20%以上）のまま2秒間隔で数値だけ計測する。両設定rootの容量を合計し、subordinate UIDのrootfsを通常duで読めない場合は固定image内のrootlesskitで同じUID mappingから測定する。測定不可は失敗とし、連続peak/memory測定を主張しない。build10m/format15m/runtime5mをCI API durationと照合する。初期100MiB目標はGitLab.com公式SaaS資料の圧縮artifact1GBより小さく、project APIのmax_artifacts_sizeはnull（overrideなし）。admin設定直接read/境界uploadは受入証拠に含めない。
+
+OCI artifactはmaintainer access・1日。CI出力/cacheはDocker contextから除外する。未保護API専用`AT16_MISSING_INPUT` fixtureはproducer remoteartifactを維持し、そのjobのtarコピーだけを欠落させる。strict consumerの明示失敗/部分layoutなし/no registry fallbackを保存してjobをfailさせ、後段consumerのskipを実確認する。24時間実待機とは区別する。入力不足を別image再buildや過去成功で救済しない。
+
+実受入のsource/pipeline/job/digestと予算・負試験・中間main AT05・統合証跡はplatform-gitopsの実装受入資料へ保存する。ローカルbinary artifact取得ヘルパーとprivate job trace取得はpolicy拒否を尊重して再試行せず、CI内のnative成果物引渡しと公開許可項目JSON/API metadataで検証する。全条件の証跡/main統合前にPE016F完了とはしない。frontend全工程切替後にbackendへ展開する。

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+.cache/
+.npm/
+*.tsbuildinfo
+.env*
+!.env.example
+.security/
+.validation/
+.oci/
+.oci-budget-*/
+__pycache__/

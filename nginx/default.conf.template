@@ -1,0 +1,19 @@
+# frontendコンテナのNginx設定。Dockerfileがdefault.confとしてコピーするため、このファイル自体に起動時の置換処理はない。
+# 静的React成果物を配信し、/apiをbackend Serviceへ転送。Kubernetes版設定はapplication-manifest/charts/frontend/templates/configmap.yaml。
+server {
+  listen 8080;
+  root /usr/share/nginx/html;
+  client_body_temp_path /tmp/client; proxy_temp_path /tmp/proxy;
+  location = /livez { access_log off; return 200 'ok\n'; }
+  location = /readyz { access_log off; return 200 'ok\n'; }
+  # proxy_passにURI末尾を指定しないので/api/accountsを維持して転送する。
+  # 接続・読込・書込各5秒は前段の待機上限。Nginxのreadyzはbackend DBの正常性までは確認しない。
+  location /api/ {
+    proxy_pass http://backend.account.svc.cluster.local:8080;
+    proxy_connect_timeout 5s; proxy_read_timeout 5s; proxy_send_timeout 5s;
+    proxy_set_header X-Request-ID $request_id;
+    proxy_intercept_errors off;
+  }
+  # SPAの画面URLはindex.htmlへ戻す。/apiの失敗は上のlocationでbackend応答を維持する。
+  location / { try_files $uri $uri/ /index.html; }
+}
