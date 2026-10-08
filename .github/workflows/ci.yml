@@ -175,7 +175,12 @@ jobs:
       - name: Propose a manifest update
         env:
           GH_TOKEN: ${{ secrets.MANIFEST_WRITE_TOKEN }}
-        run: python3 -I ci/github/release.py propose
+        run: |
+          if test -z "$GH_TOKEN"; then
+            echo 'MANIFEST_WRITE_TOKEN is missing or empty in the manifest-update Environment.' >&2
+            exit 1
+          fi
+          python3 -I ci/github/release.py propose
 
   ci-result:
     if: always()
