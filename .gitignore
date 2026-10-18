@@ -11,3 +11,8 @@ coverage/
 .oci/
 .oci-budget-*/
 __pycache__/
+
+# Immutable shared modules are materialized by ci/shared-tools.sh.
+/tools/oci-input/
+/tools/release-record/
+/tools/scan-gate/

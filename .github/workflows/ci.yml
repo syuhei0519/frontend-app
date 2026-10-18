@@ -103,6 +103,7 @@ jobs:
       - name: Build trusted local validators
         run: |
           mkdir -p .security
+          bash ci/shared-tools.sh
           (cd tools/scan-gate; CGO_ENABLED=0 go build -o ../../.security/scan-gate .)
           (cd tools/oci-input; CGO_ENABLED=0 go build -o ../../.security/github-oci-check ./cmd/github-oci-check; CGO_ENABLED=0 go build -o ../../.security/oci-crane-check ./cmd/oci-crane-check)
           (cd tools/release-record; CGO_ENABLED=0 go build -o ../../.security/sbom-check ./cmd/sbom-check)
@@ -144,6 +145,7 @@ jobs:
       - name: Verify artifact and compile registry tool
         run: |
           mkdir -p .security/bin
+          bash ci/shared-tools.sh
           (cd tools/oci-input; go build -o ../../.security/bin/github-oci-check ./cmd/github-oci-check)
           GOBIN="$PWD/.security/bin" go install github.com/google/go-containerregistry/cmd/crane@v0.21.7
           echo "$PWD/.security/bin" >> "$GITHUB_PATH"
