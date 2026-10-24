@@ -1,0 +1,8 @@
+{
+  "state": "configured",
+  "languages": [
+    "javascript-typescript"
+  ],
+  "query_suite": "extended",
+  "threat_model": "remote"
+}
