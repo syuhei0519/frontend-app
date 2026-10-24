@@ -1,0 +1,19 @@
+{
+  "version": "1.182.0",
+  "image": "semgrep/semgrep:1.182.0@sha256:4a34048c04fef049f71665047f074cffb00cc3d89482f965a5cd151d589237af",
+  "language": "javascript-typescript",
+  "upstream": "https://github.com/semgrep/semgrep-rules",
+  "upstreamCommit": "16b9e6d45f10649f6a531ec4838ed9924372c3bc",
+  "files": {
+    "detect-eval-with-expression.yaml": "3b8fe2524b094c72c34aaa6d21b0408ffdac2471a335125cf726993253777951",
+    "insecure-innerhtml.yaml": "3f2854f92c3c8a1ba3a107a140a5b31789650851be57586fd21a409e129193e4",
+    "react-dangerouslysetinnerhtml.yaml": "794094512be7f7dcaa49a4b1edf621dbdf1f984b4f29ab09a23538c0e59c2136",
+    "typed-react-html-audit.yaml": "a9c70583f9990d31cd65703137d98876241d12b5e6bb942233dfc1ec2ccfd38d"
+  },
+  "rules": {
+    "detect-eval-with-expression": "WARNING",
+    "insecure-innerhtml": "ERROR",
+    "react-dangerouslysetinnerhtml": "WARNING",
+    "typed-react-html-audit": "WARNING"
+  }
+}

@@ -1,0 +1,17 @@
+# Locally authored sink audit: the upstream taint rule misses typed destructured props.
+rules:
+- id: typed-react-html-audit
+  languages: [typescript, javascript]
+  severity: WARNING
+  message: Review dynamic raw HTML insertion, including typed destructured React props.
+  metadata:
+    category: security
+    confidence: LOW
+    cwe: ['CWE-79: Cross-site Scripting']
+  patterns:
+  - pattern: |
+      <$TAG ... dangerouslySetInnerHTML={{__html: $HTML}} ... />
+  - pattern-not: |
+      <$TAG ... dangerouslySetInnerHTML={{__html: "..."}} ... />
+  - pattern-not: |
+      <$TAG ... dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(...)}} ... />
