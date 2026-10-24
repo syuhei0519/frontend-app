@@ -1,9 +1,23 @@
 {
-  "schemaVersion": 1,
-  "mode": "observe",
+  "schemaVersion": 2,
+  "mode": "enforce",
   "blockingSeverities": [
     "ERROR",
     "WARNING"
   ],
+  "ruleModes": {
+    "detect-eval-with-expression": {
+      "mode": "enforce"
+    },
+    "insecure-innerhtml": {
+      "mode": "enforce"
+    },
+    "react-dangerouslysetinnerhtml": {
+      "mode": "enforce"
+    },
+    "typed-react-html-audit": {
+      "mode": "enforce"
+    }
+  },
   "exceptions": []
 }
