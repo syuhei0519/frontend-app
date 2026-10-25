@@ -1,3 +1,4 @@
+/* Account 画面の共通レイアウトとフォーム・一覧の見た目を整えます。 */
 :root { font-family: Inter, system-ui, sans-serif; color: #172034; background: #eef2f7; }
 * { box-sizing: border-box; }
 body { margin: 0; }
