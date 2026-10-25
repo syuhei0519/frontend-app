@@ -2,6 +2,7 @@
 // 入力はAccountForm、表示はAccountList、HTTP呼出はsrc/api/accounts.tsへ委譲する。
 import { useEffect, useState } from 'react'
 import { createAccount, deleteAccount, listAccounts, updateAccount } from './api/accounts'
+import { errorMessage } from './errorMessage'
 import { AccountForm } from './features/accounts/AccountForm'
 import { AccountList } from './features/accounts/AccountList'
 import type { Account, AccountInput } from './types'
@@ -13,25 +14,43 @@ export default function App() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
-  // 初回一覧取得。cleanupのactive=falseで破棄後のstate更新を避けるが、進行中fetch自体は中断しない。
+  // 画面を閉じた後に応答が届いても、表示状態を更新しないようにする。
+  // 通信自体は続くため、成功・失敗・終了のすべてで active を確認する。
   useEffect(() => {
     let active = true
-    void listAccounts().then((items) => { if (active) setAccounts(items) }).catch((cause: unknown) => { if (active) setError(cause instanceof Error ? cause.message : '読み込みに失敗しました。') }).finally(() => { if (active) setLoading(false) })
-    return () => { active = false }
+    void listAccounts()
+      .then((items) => {
+        if (active) setAccounts(items)
+      })
+      .catch((cause: unknown) => {
+        if (active) setError(errorMessage(cause, '読み込みに失敗しました。'))
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+    return () => {
+      active = false
+    }
   }, [])
 
   // API成功時だけ一覧を更新してフォームを閉じる。失敗は呼出元AccountFormのcatchへ伝える。
   async function save(input: AccountInput) {
     const saved = editor ? await updateAccount(editor.id, input) : await createAccount(input)
-    setAccounts((items) => editor ? items.map((item) => item.id === saved.id ? saved : item) : [saved, ...items])
+    setAccounts((items) => editor
+      ? items.map((item) => item.id === saved.id ? saved : item)
+      : [saved, ...items])
     setEditor(undefined)
   }
 
   // 利用者確認後に削除。API成功後だけ一覧から外し、失敗なら一覧を残して画面へエラーを表示する。
   async function remove(account: Account) {
     if (!window.confirm(`${account.name}を削除しますか？`)) return
-    try { await deleteAccount(account.id); setAccounts((items) => items.filter((item) => item.id !== account.id)) }
-    catch (cause) { setError(cause instanceof Error ? cause.message : '削除に失敗しました。') }
+    try {
+      await deleteAccount(account.id)
+      setAccounts((items) => items.filter((item) => item.id !== account.id))
+    } catch (cause) {
+      setError(errorMessage(cause, '削除に失敗しました。'))
+    }
   }
 
   return <main>
