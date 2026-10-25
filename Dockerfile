@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 # CIのBuildKitが読む複数段ビルド定義。ソースと固定依存から実行用イメージを作る。
-# 入口はci/build-oci.sh、成果物のdigest検査はtools/oci-input/layout.go。
+# 入口はci/github/oci.sh、成果物のdigest検査はtools/oci-input/layout.go。
 # VCS_REF/VCS_SOURCEをOCIラベルへ結び、build用依存を最終runtimeへそのまま持ち込まない。
 FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS build
 WORKDIR /app

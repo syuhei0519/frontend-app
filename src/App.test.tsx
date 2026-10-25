@@ -1,3 +1,4 @@
+// Account 画面で、取得・作成と通信失敗時の表示が利用者に正しく伝わることを確認します。
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'

@@ -1,3 +1,4 @@
+// フロントエンドの JavaScript・TypeScript を静的に検査する規則と対象範囲を定めます。
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'

@@ -1,3 +1,4 @@
+// 開発サーバー・本番ビルド・画面テストが使う Vite の設定をまとめます。
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
