@@ -219,10 +219,17 @@ jobs:
             exit 1
           fi
           python3 -I ci/github/release.py propose
+  # PR のときだけ、タイトル・本文・大きさを検査する（PLAT-257、ひな形は ai-development-system/templates）。
+  pr-conventions:
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/pr-conventions.yml
 
   ci-result:
     if: always()
-    needs: [classify, docs, validate, sast, image]
+    needs: [classify, docs, validate, sast, image, pr-conventions]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -234,7 +241,10 @@ jobs:
           VALIDATE: ${{ needs.validate.result }}
           SAST: ${{ needs.sast.result }}
           IMAGE: ${{ needs.image.result }}
+          PR_CONVENTIONS: ${{ needs.pr-conventions.result }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
+          if test "$EVENT_NAME" = pull_request; then test "$PR_CONVENTIONS" = success; fi
           test "$CLASSIFY" = success
           if test "$DOCS" = true; then test "$DOCS_RESULT" = success; else
             test "$VALIDATE" = success
