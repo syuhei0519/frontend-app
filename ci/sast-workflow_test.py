@@ -20,7 +20,7 @@ class Workflow(unittest.TestCase):
         self.assertIn('needs: [validate, sast]', self.block('image'))
         self.assertNotRegex(self.block('image'), r'^    if:', 'image must inherit dependency success')
         aggregate = self.block('ci-result')
-        self.assertIn('needs: [classify, docs, validate, sast, image]', aggregate)
+        self.assertIn('needs: [classify, docs, validate, sast, image, pr-conventions]', aggregate)
         self.assertIn('if: always()', aggregate)
         self.assertIn('SAST: ${{ needs.sast.result }}', aggregate)
         self.assertIn('test "$SAST" = success', aggregate)
@@ -42,9 +42,22 @@ class Workflow(unittest.TestCase):
         for sast, expected in [('success', 0), ('failure', 1), ('cancelled', 1), ('skipped', 1), ('', 1)]:
             command = ['bash', '-e', '-c', code]
             import os
-            env = {**os.environ, 'CLASSIFY': 'success', 'DOCS': 'false', 'VALIDATE': 'success', 'IMAGE': 'success', 'SAST': sast}
+            env = {**os.environ, 'CLASSIFY': 'success', 'DOCS': 'false', 'VALIDATE': 'success', 'IMAGE': 'success', 'SAST': sast, 'PR_CONVENTIONS': 'skipped', 'EVENT_NAME': 'push'}
             result = subprocess.run(command, env=env, capture_output=True)
             self.assertEqual(result.returncode, expected, result.stderr.decode(errors='replace'))
+
+    def test_pr_conventions_required_only_for_pull_requests(self):
+        job = self.block('pr-conventions')
+        self.assertIn("if: github.event_name == 'pull_request'", job)
+        self.assertIn('uses: ./.github/workflows/pr-conventions.yml', job)
+        code = self.block('ci-result').split('        run: |\n')[1]
+        code = '\n'.join(line[10:] for line in code.splitlines())
+        code = 'python3() { return 0; };\n' + code
+        import os
+        for event, result, expected in [('pull_request', 'success', 0), ('pull_request', 'failure', 1), ('pull_request', 'skipped', 1), ('push', 'skipped', 0)]:
+            env = {**os.environ, 'CLASSIFY': 'success', 'DOCS': 'false', 'VALIDATE': 'success', 'IMAGE': 'success', 'SAST': 'success', 'PR_CONVENTIONS': result, 'EVENT_NAME': event}
+            run = subprocess.run(['bash', '-e', '-c', code], env=env, capture_output=True)
+            self.assertEqual(run.returncode, expected, run.stderr.decode(errors='replace'))
 
 
 if __name__ == '__main__':
