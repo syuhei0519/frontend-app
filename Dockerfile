@@ -13,6 +13,10 @@ FROM nginxinc/nginx-unprivileged:1.29.5-alpine3.23@sha256:42a7d7f2ee23e9f5a1dcdf
 ARG VCS_REF=unknown
 ARG VCS_SOURCE=unknown
 LABEL org.opencontainers.image.revision=$VCS_REF org.opencontainers.image.source=$VCS_SOURCE
+# PLAT-281: CVE-2026-111497 (brotli-libs) の一時対応。上流が brotli 1.2.1 で再ビルドするまでの間だけ、brotli-libs を更新する。
+# 再ビルド後にFROMのdigestを更新し、このRUNとUSER rootを外す。最終的なUSERは必ず10001:10001にする。
+USER root
+RUN apk upgrade --no-cache brotli-libs
 USER 10001:10001
 COPY --from=build --chown=10001:10001 /app/dist /usr/share/nginx/html
 COPY --chown=10001:10001 nginx/default.conf.template /etc/nginx/conf.d/default.conf
